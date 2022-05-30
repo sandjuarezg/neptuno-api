@@ -1,0 +1,124 @@
+.body {
+  margin: auto 0;
+}
+.main__container {
+  height: 100vh;
+}
+.main__container--account {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1000px) {
+  .main__container--account {
+    flex-direction: row; 
+  }
+}
+.account {
+  background: #8ff1be;
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  align-items: center;
+  color: black;
+}
+@media (min-width: 1000px) {
+  .account {
+    width: 100%;
+  }
+}
+.cover {
+  background-size: cover;   
+  color: white;
+}
+.account__title {
+  font-size: 40px;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0 0 40px;
+  text-align: center;
+}
+.account__text {
+  font-size: 30px;
+}
+.account__input {
+  border-radius: 20px;
+  border: none;
+  padding: 12px;
+  font-size: 25px;
+  width: 80vw;
+  max-width: 400px;
+  margin-bottom: 30px;
+}
+.account__input:focus {
+  outline: none;
+}
+@media (min-width: 600px) {
+  .account__input {
+    width: 540px;
+  }
+}
+.account__button {
+  width: 30vw;
+  border-radius: 20px;
+  border: none;
+  padding: 12px;
+  font-size: 30px;
+  margin: 0 auto;
+  font-weight: bold;
+  background: #2b3785;
+  max-width: 250px;
+  text-align: center;
+  color: white;
+}
+.account__button:hover {
+  cursor: pointer;
+  background: #439595;
+  color: white;
+}
+.account__button--label {
+  background: #6ad5df;
+  color: black;
+}
+.account__button--label:hover {
+  color: white;
+}
+.account__checkbox {
+  display: none;
+}
+.account__checkbox ~ article:nth-of-type(1), .account__checkbox ~ form:nth-of-type(1) {
+  display: none;
+}
+.account__checkbox ~ article:nth-of-type(2), .account__checkbox ~ form:nth-of-type(2) {
+  display: flex;
+}
+.account__checkbox:checked ~ article:nth-of-type(1), .account__checkbox:checked ~ form:nth-of-type(1) {
+  display: flex;
+}
+.account__checkbox:checked ~ article:nth-of-type(2), .account__checkbox:checked ~ form:nth-of-type(2) {
+  display: none;
+}
+.account__container{
+  display: flex;
+  flex-direction: column;
+}
+.article__proyTask {
+  height: fit-content;
+  padding: 20px;
+  background: #1c6982;
+  color: white;
+  border-bottom: solid white;
+  width: 50vw;
+}
+.account__button--small{
+  width: 10vw;
+  font-size: 15px;
+  text-decoration: none;
+}
+.coverProy {
+  background-image: url('../img/as.jpg');
+  background-size: cover;
+}
+.link {
+  text-decoration: none;
+  color: white;
+}

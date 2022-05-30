@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neptuno-Login</title>
+    <link href="./styles/main.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <link rel="icon" type="image/x-icon" href="./img/neptuno.png">
+</head>
+
+<!-- body -->
+<body class="body">
+    <!-- main -->
+    <main class="main">
+        <section class="main__container main__container--account">
+            <input class="account__checkbox" type="checkbox" name="account" id="account">
+            <article class="account cover" style="background-image: url('./img/astro.jpg');">
+                <h3 class="account__title">¿Tienes una cuenta?</h3>
+                <label class="account__button account__button--label" for="account">Log in</label>   
+            </article>
+            <form class="account account--signin" action="/signin" method="POST">
+                <h3 class="account__title">Sign in</h3>
+                <div class="account__container">
+                    <label for="email" class="account__text">Correo</label>
+                    <input id="email" class="account__input" placeholder="email" name="email" type="email" required>
+                    <label for="password" class="account__text">Contraseña</label>
+                    <input id="password" class="account__input" placeholder="password" name="password" type="password" required>
+                </div>
+                <input class="account__button" type="submit" value="Sign in">
+            </form>
+            <form class="account" action="/proyectos" method="POST">
+                <h3 class="account__title">Log in</h3>
+                <div class="account__container">
+                    <label for="emailLogin" class="account__text">Correo</label>
+                    <input id="emailLogin" class="account__input" placeholder="email" name="email" type="email" required>
+                    <label for="passwordLogin" class="account__text">Contraseña</label>
+                    <input id="passwordLogin" class="account__input" placeholder="password" name="password" type="password" required>
+                </div>
+                <input class="account__button" type="submit" name="login" value="Log in">
+            </form>
+            <article class="account cover account--signin" style="background-image: url('./img/astro1.jpg');">
+                <h3 class="account__title">¿Eres nuevo?</h3>
+                <label class="account__button account__button--label" for="account">Crea una cuenta</label>  
+            </article>
+        </section>
+    </main>
+</body>
+</html>
