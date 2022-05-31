@@ -15,7 +15,7 @@ var idProyect string
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("./public")))
-	http.HandleFunc("/signin", signin)
+	http.HandleFunc("/neptuno-api/public/signin", signin)
 	http.HandleFunc("/proyectos", proyectos)
 	http.HandleFunc("/tareas", tareas)
 
