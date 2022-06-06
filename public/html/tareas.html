@@ -12,54 +12,68 @@
 </head>
 
 <!-- body -->
-<body>
+<body class="body">
+
+  <!-- header -->
+  <header class="header">
+    <header class="header__container">
+      <div class="d-flex align-items-center">
+        <img src="../img/profile.jpeg" class="header__profile" alt="img de perfil"> 
+        <h2 class="m-0"><b>Tareas del Proyecto: {{.NameProyect}}</b></h2>
+      </div>
+      <div>
+        <a href="/proyectos" class="header__link"><b>Volver a proyectos</b></a>
+        <a href="/" class="header__link"><b>Cerrar sesión</b></a>
+      </div>
+    </header>
+  </header>
 
   <!-- main -->
   <main class="main">
     <section class="main__container d-flex justify-content-between">
       <div class="coverProy"> 
-        {{range .}}
+        {{range .Tasks}}
         <article class="article__proyTask d-flex justify-content-between">
-          <p>{{.Descripcion}}</p>
-        <div class="d-flex justify-content-end">
+          <p class="text">{{.Descripcion}}</p>
+          <div class="d-flex justify-content-end align-items-center">
             {{if .Completada}}
-            <label><input type="checkbox" id="cbox1" value="first_checkbox" checked>Completado</label>
-        {{else}}
-            <label><input type="checkbox" id="cbox1" value="first_checkbox">Completado</label>
-        {{end}}
-        
-        <!-- Button trigger modal -->
-        <button type="button" class="account__button account__button--small" data-bs-toggle="modal" data-bs-target="#exampleModal">
-          Editar
-        </button>
+            <label><input type="checkbox" value="first_checkbox" checked></label>
+            {{else}}
+            <label><input type="checkbox" value="first_checkbox"></label>
+            {{end}}
+          
+            <!-- Button trigger modal -->
+            <button type="button" class="mx-3 account__button account__button--small" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Editar
+            </button>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-body">
-                <form class="account" action="/tareas?editar={{.ID}}" method="POST">
-                  <h3 class="account__title">Edita el nombre de la tarea</h3>
-                  <div class="account__container">
-                      <label for="nombreTarea" class="account__text">Nombre</label>
-                      <input id="nombreTarea" class="account__input" placeholder="nombre" name="nombreTarea" type="text" required>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <form class="account" action="/tareas?editar={{.ID}}" method="POST">
+                      <h3 class="account__title">Edita el nombre de la tarea</h3>
+                      <div class="account__container">
+                          <label for="nombreTarea" class="account__text">Nombre</label>
+                          <input id="nombreTarea" class="account__input" placeholder="nombre" name="nombreTarea" type="text" required>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="account__button account__button--small" data-bs-dismiss="modal">Close</button>
+                        <input class="account__button account__button--small" type="submit" name="editar" value="Editar">
+                      </div>
+                    </form>
                   </div>
-                  <div class="modal-footer">
-                    <button type="button" class="account__button account__button--small" data-bs-dismiss="modal">Close</button>
-                    <input class="account__button account__button--small" type="submit" name="editar" value="Editar">
-                  </div>
-                </form>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <a href="/tareas?eliminar={{.ID}}" class="account__button account__button--small">Eliminar</a>  
+            <a href="/tareas?eliminar={{.ID}}" class="account__button account__button--small">Eliminar</a>  
           </div>
         </article>
         {{end}}
       </div>
       
-      <form class="account" action="/tareas?agregar" method="POST">
+      <form class="account w-50" action="/tareas?agregar" method="POST">
         <h3 class="account__title">Crea nueva tarea</h3>
         <div class="account__container">
             <label for="nombreTarea" class="account__text">Nombre</label>
@@ -67,19 +81,9 @@
         </div>
         <input class="account__button" type="submit" name="Agregar" value="Agregar">
       </form>
-    </main>   
-  
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  </body>
-  </html>
-
-
-
-
-  <!-- main -->
-  <main class="main d-flex">
-    <section class="main__container">
-      <article>
-          </article>
     </section>
+  </main>    
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
     

@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+type ErrorMessage struct {
+	Field   string `json:"field"`
+	Message string `json:"message"`
+}
+
 type User struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -18,7 +23,7 @@ type Session struct {
 	RefreshToken bool   `json:"refreshToken"`
 }
 
-func Login(r *http.Request) (userSession Session, err error) {
+func Login(r *http.Request) (userSession Session, errMess string, err error) {
 	if err = r.ParseForm(); err != nil {
 		return
 	}
@@ -51,12 +56,21 @@ func Login(r *http.Request) (userSession Session, err error) {
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode != http.StatusOK {
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
 		return
 	}
 
-	content, err := ioutil.ReadAll(response.Body)
-	if err != nil {
+	var errMessage []ErrorMessage
+
+	if response.StatusCode != http.StatusOK {
+		err = json.Unmarshal(content, &errMessage)
+		if err != nil {
+			return
+		}
+
+		errMess = errMessage[0].Message
+
 		return
 	}
 

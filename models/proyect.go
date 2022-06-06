@@ -16,15 +16,10 @@ type Proyect struct {
 }
 
 func GetProyects(userSession Session) (proyects []Proyect, err error) {
-	userJSON, err := json.Marshal(userSession)
-	if err != nil {
-		return
-	}
-
 	request, err := http.NewRequest(
 		"GET",
 		"https://quiet-fortress-17520.herokuapp.com/api/v1/proyectos",
-		bytes.NewBuffer(userJSON),
+		nil,
 	)
 	if err != nil {
 		return
@@ -51,6 +46,44 @@ func GetProyects(userSession Session) (proyects []Proyect, err error) {
 	}
 
 	err = json.Unmarshal(content, &proyects)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func GetProyectByID(userSession Session, id string) (proyect Proyect, err error) {
+	request, err := http.NewRequest(
+		"GET",
+		"https://quiet-fortress-17520.herokuapp.com/api/v1/proyectos/"+id,
+		nil,
+	)
+	if err != nil {
+		return
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+	request.Header.Add("Authorization", userSession.Type+" "+userSession.Token)
+
+	client := &http.Client{}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	content, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return
+	}
+
+	err = json.Unmarshal(content, &proyect)
 	if err != nil {
 		return
 	}
@@ -99,7 +132,7 @@ func EditProyect(userSession Session, id string, r *http.Request) (err error) {
 	return
 }
 
-func DeleteProyect(userSession Session, id string) (err error) {
+func DeleteProyect(userSession Session, id string) (errMess string, err error) {
 	request, err := http.NewRequest(
 		"DELETE",
 		"https://quiet-fortress-17520.herokuapp.com/api/v1/proyectos/"+id,
@@ -120,12 +153,14 @@ func DeleteProyect(userSession Session, id string) (err error) {
 	}
 	defer response.Body.Close()
 
-	_, err = ioutil.ReadAll(response.Body)
+	content, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return
 	}
 
 	if response.StatusCode != http.StatusOK {
+		errMess = string(content)
+
 		return
 	}
 

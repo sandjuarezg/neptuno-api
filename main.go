@@ -15,9 +15,9 @@ var idProyect string
 
 func main() {
 	http.Handle("/", http.FileServer(http.Dir("./public")))
-	http.HandleFunc("/public/signin", signin)
-	http.HandleFunc("/public/proyectos", proyectos)
-	http.HandleFunc("/public/tareas", tareas)
+	http.HandleFunc("/signin", signin)
+	http.HandleFunc("/proyectos", proyectos)
+	http.HandleFunc("/tareas", tareas)
 
 	fmt.Println("Listening on localhost:8080")
 
@@ -67,17 +67,22 @@ func signin(w http.ResponseWriter, r *http.Request) {
 func proyectos(w http.ResponseWriter, r *http.Request) {
 	defer fmt.Printf("Response from %s\n", r.URL.RequestURI())
 
+	var (
+		err     error
+		errMess string
+	)
+
 	// edit
-	if strings.Contains(r.URL.String(), "/public/proyectos?editar=") {
+	if strings.Contains(r.URL.String(), "/proyectos?editar=") {
 		if r.Method != "POST" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 
 			return
 		}
 
-		err := models.EditProyect(
+		err = models.EditProyect(
 			userSession,
-			strings.Trim(r.URL.String(), "/public/proyectos?editar="),
+			strings.Trim(r.URL.String(), "/proyectos?editar="),
 			r,
 		)
 		if err != nil {
@@ -89,10 +94,10 @@ func proyectos(w http.ResponseWriter, r *http.Request) {
 	} else
 
 	// delete
-	if strings.Contains(r.URL.String(), "/public/proyectos?eliminar=") {
-		err := models.DeleteProyect(
+	if strings.Contains(r.URL.String(), "/proyectos?eliminar=") {
+		errMess, err = models.DeleteProyect(
 			userSession,
-			strings.Trim(r.URL.String(), "/public/proyectos?eliminar="),
+			strings.Trim(r.URL.String(), "/proyectos?eliminar="),
 		)
 		if err != nil {
 			log.Println(err)
@@ -100,11 +105,15 @@ func proyectos(w http.ResponseWriter, r *http.Request) {
 
 			return
 		}
+
+		if errMess != "" {
+			errMess = "Este proyecto tiene tareas"
+		}
 	} else
 
 	// add
-	if strings.Contains(r.URL.String(), "/public/proyectos?agregar") {
-		err := models.AddProyect(userSession, r)
+	if strings.Contains(r.URL.String(), "/proyectos?agregar") {
+		err = models.AddProyect(userSession, r)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -113,18 +122,31 @@ func proyectos(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// login
-		if r.Method != "POST" {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+		if r.Method == "POST" {
+			userSession, errMess, err = models.Login(r)
+			if err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
 
-			return
+				return
+			}
 		}
 
-		var err error
+		if errMess != "" {
+			t, err := template.ParseFiles("./public/html/index.html")
+			if err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
 
-		userSession, err = models.Login(r)
-		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			err = t.Execute(w, errMess)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+
+				return
+			}
 
 			return
 		}
@@ -138,6 +160,14 @@ func proyectos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	data := struct {
+		Proyects []models.Proyect
+		Aviso    string
+	}{
+		Proyects: proyects,
+		Aviso:    errMess,
+	}
+
 	t, err := template.ParseFiles("./public/html/proyectos.html")
 	if err != nil {
 		log.Println(err)
@@ -146,9 +176,8 @@ func proyectos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, proyects)
+	err = t.Execute(w, data)
 	if err != nil {
-		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 
 		return
@@ -159,7 +188,7 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 	defer fmt.Printf("Response from %s\n", r.URL.RequestURI())
 
 	// edit
-	if strings.Contains(r.URL.String(), "/public/tareas?editar=") {
+	if strings.Contains(r.URL.String(), "/tareas?editar=") {
 		if r.Method != "POST" {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 
@@ -168,7 +197,7 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 
 		err := models.EditTask(
 			userSession,
-			strings.Trim(r.URL.String(), "/public/tareas?editar="),
+			strings.Trim(r.URL.String(), "/tareas?editar="),
 			r,
 		)
 		if err != nil {
@@ -180,10 +209,10 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 	} else
 
 	// delete
-	if strings.Contains(r.URL.String(), "/public/tareas?eliminar=") {
+	if strings.Contains(r.URL.String(), "/tareas?eliminar=") {
 		err := models.DeleteTask(
 			userSession,
-			strings.Trim(r.URL.String(), "/public/tareas?eliminar="),
+			strings.Trim(r.URL.String(), "/tareas?eliminar="),
 		)
 		if err != nil {
 			log.Println(err)
@@ -193,7 +222,7 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		// add
-		if strings.Contains(r.URL.String(), "/public/tareas?agregar") {
+		if strings.Contains(r.URL.String(), "/tareas?agregar") {
 			err := models.AddTask(userSession, idProyect, r)
 			if err != nil {
 				log.Println(err)
@@ -204,8 +233,8 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if strings.Contains(r.URL.String(), "/public/tareas?id=") {
-		idProyect = strings.Trim(r.URL.String(), "/public/tareas?id=")
+	if strings.Contains(r.URL.String(), "/tareas?id=") {
+		idProyect = strings.Trim(r.URL.String(), "/tareas?id=")
 	}
 
 	tasks, err := models.GetTasks(userSession, idProyect)
@@ -216,6 +245,22 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	proyect, err := models.GetProyectByID(userSession, idProyect)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+
+		return
+	}
+
+	data := struct {
+		NameProyect string
+		Tasks       []models.Task
+	}{
+		NameProyect: proyect.Nombre,
+		Tasks:       tasks,
+	}
+
 	t, err := template.ParseFiles("./public/html/tareas.html")
 	if err != nil {
 		log.Println(err)
@@ -224,7 +269,7 @@ func tareas(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, tasks)
+	err = t.Execute(w, data)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
